@@ -346,7 +346,6 @@ class Entity(Drawable):
                     self.rect.x = obj.x + (obj.w + 1)
                     self.vx *= -.25
 
-
     def on_update(self, speed_factor):
         self.slowing = True
         if not self.move_left and not self.move_right:

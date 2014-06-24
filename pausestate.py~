@@ -57,7 +57,8 @@ class PauseState(State):
                     elif option[0] == 2:
                         print("Make me do something...")
                     elif option[0] == 3:
-                        self.switch_state("menustate")
+                        print("Make me do something...")
+                        #self.switch_state("menustate") # NOT IMPLEMENTED YET
 
                 elif event.key == pygame.K_r:
                     self.on_reset()

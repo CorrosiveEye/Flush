@@ -37,3 +37,7 @@ class State(object):
 
     def on_resume(self):
         self.running = True
+        
+    def switch_state(self, new_state):
+        self.running = False
+        self.change_state = new_state

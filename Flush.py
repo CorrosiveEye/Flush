@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 """
 Things todo:
     Add functionality to menu buttons
@@ -20,6 +20,7 @@ from utils                   import *
 from constants               import *
 from retrogamelib.camera     import *
 from playstate               import PlayState
+from menustate               import MenuState
 from pausestate              import PauseState
 
 
@@ -41,10 +42,12 @@ class Game(object):
 
         self.playstate = PlayState()
         self.pausestate = PauseState()
+        self.menustate  = MenuState()
         self.states = {'playstate'  : self.playstate,
-                      'pausestate' : self.pausestate}
+                      'pausestate' : self.pausestate,
+                      'menustate' : self.menustate}
 
-        self.state_curr = self.states['playstate']
+        self.state_curr = self.states['menustate']
 
         self.cam = Camera(WWIDTH,
                         WHEIGHT,
@@ -57,6 +60,7 @@ class Game(object):
     def on_load(self):
         for v in self.states.values():
             v.on_load(self.cam, self.font, self.fps)
+        self.state_curr.on_resume()
 
 
     def on_reset(self):
@@ -68,14 +72,16 @@ class Game(object):
 
 
     def on_event(self):
+        # iterate through list of events
         events = pygame.event.get()
-        
         for e in events:
             if e.type == pygame.QUIT:
                 self.running = False
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     self.running = False
+                    
+        # send rest of unhandled events to the state
         self.state_curr.on_event(events)
 
 
@@ -96,6 +102,9 @@ class Game(object):
             self.on_render()
             
             if self.state_curr.running == False:
+                    if self.state_curr.change_state == "menustate":
+                        self.on_reset()
+                        self.on_load()
                     self.state_curr = self.states[self.state_curr.change_state]
                     self.state_curr.on_resume()
             else:

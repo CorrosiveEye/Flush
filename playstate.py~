@@ -88,7 +88,8 @@ class PlayState(State):
         for event in e:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
-                    self.switch_state("pausestate")
+                    self.running = False
+                    self.change_state = "pausestate"
 
                 elif event.key == pygame.K_RETURN:
                     pass

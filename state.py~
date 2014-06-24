@@ -37,22 +37,3 @@ class State(object):
 
     def on_resume(self):
         self.running = True
-        
-    def on_event(self, e):
-        pass
-
-
-    def on_update(self):
-        pass
-
-
-    def on_collision(self):
-        pass
-
-
-    def on_animate(self):
-        pass
-
-
-    def on_render(self):
-        pass

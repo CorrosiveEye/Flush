@@ -1,5 +1,6 @@
-import pygame
-import random
+                         import pygame
+                         import sys
+                         import random
 
 from pygame              import Surface, font
  
@@ -12,9 +13,9 @@ from drawables           import *
 from retrogamelib.camera import Camera, ParallaxCamera
 from retrogamelib.dialog import DialogBox, Menu
 
-class PauseState(State):
+class MenuState(State):
     def __init__(self):
-        super(PauseState, self).__init__()
+        super(MenuState, self).__init__()
 
         self.debug = False
         self.scale = 8
@@ -24,10 +25,10 @@ class PauseState(State):
 
 
     def on_resume(self):
-        super(PauseState, self).on_resume()
+        super(MenuState, self).on_resume()
         for snow in snowbg_sprites_list:
             snow.set_pos(self.cam.rect)
-        self.cam.follow(self.pause)
+        self.cam.follow(self.menu)
 
     def on_reset(self):
         for group in all_groups_list:
@@ -36,10 +37,10 @@ class PauseState(State):
 
 
     def on_load(self, camera=None, font=None, fps=None):
-        super(PauseState, self).on_load(camera, font, fps)
+        super(MenuState, self).on_load(camera, font, fps)
 
-        self.pause   = Menu(self.font, ["Resume", "Save", "Options", "Main Menu"],
-        (self.surf_main.get_width() / 2) / 2, (self.surf_main.get_height() / 2) / 2)
+        self.menu = Menu(self.font, ["Play", "Options", "Quit"],
+                (self.surf_main.get_width() / 2) / 2, (self.surf_main.get_height() / 2) / 2)
 
 
     def on_event(self, e):
@@ -49,34 +50,33 @@ class PauseState(State):
                     self.switch_state("playstate")
 
                 elif event.key == pygame.K_RETURN:
-                    option = self.pause.get_option()
+                    option = self.menu.get_option()
                     if option[0] == 0:
                         self.switch_state("playstate")
                     elif option[0] == 1:
                         print("Make me do something...")
                     elif option[0] == 2:
-                        print("Make me do something...")
-                    elif option[0] == 3:
-                        self.switch_state("menustate")
+                        pygame.quit()
+                        sys.exit()
 
                 elif event.key == pygame.K_r:
                     self.on_reset()
                     self.on_load()
 
                 elif event.key == pygame.K_UP:
-                    self.pause.move_cursor(-1)
+                    self.menu.move_cursor(-1)
 
                 elif event.key == pygame.K_DOWN:
-                    self.pause.move_cursor(1)
+                    self.menu.move_cursor(1)
 
     def on_update(self):
         self.cam.on_update(self.fps.speed_factor)
-        self.pause.on_update()
+        self.menu.on_update()
         for snow in snowbg_sprites_list:
             snow.on_update(self.fps.speed_factor)
             snow.check_collision(self.cam.rect)
         self.cam.translate(snowbg_sprites_list)
-        self.cam.translate([self.pause])
+        self.cam.translate([self.menu])
 
     def on_render(self):
         self.surf_main.fill((5, 10, 20))
@@ -84,12 +84,8 @@ class PauseState(State):
         for snow in snowbg_sprites_list:
             snow.on_render(self.surf_main)
 
-        self.pause.draw(self.surf_main,
-                self.pause.rect)
+        self.menu.draw(self.surf_main,
+                self.menu.rect)
 
         for sprite in fog_sprites_list:
             sprite.on_render(self.surf_main)
-    
-    def switch_state(self, new_state):
-        self.running = False
-        self.change_state = new_state

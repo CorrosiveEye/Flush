@@ -4,6 +4,7 @@ from drawables     import Tile
 
 
 def load_map(filename, layr, resize=None, collidable=True, extra_groups=[]):
+    """Loads .tmx files in csv format"""
     f = open(MAP_DIR + filename, "r")
     soup = BeautifulSoup(f, "xml")
     f.close()
@@ -15,7 +16,7 @@ def load_map(filename, layr, resize=None, collidable=True, extra_groups=[]):
     theight     = int(soup.map.tileset["tileheight"])
     tsetwidth   = int(soup.map.tileset.image['width']) / twidth
     tsetheight  = int(soup.map.tileset.image['height']) / theight
-    map_csv     = None
+    
     map_csv     = soup.map.find(attrs={'name' : layr}).data.string.split(',')
 
     x = 0;
@@ -23,18 +24,21 @@ def load_map(filename, layr, resize=None, collidable=True, extra_groups=[]):
 
     if not map_csv:
         print "No Layer with name: %s" % layr
-        exit(0)
-    else:
-        pass
+        return
         
     for num in map_csv:
+        index = int(num)
         px = int(x) % int(mwidth)
         py = int(x) / int(mwidth)
-        tx = (int(num) - 1) % tsetwidth
-        ty = (int(num) - 1) / tsetheight
+        
+        # indexing in .tmx files starts at 1
+        # we want it to start at 0 so we 
+        # subtract 1 from num
+        tx = (index - 1) % tsetwidth
+        ty = (index - 1) / tsetheight
 
         x += 1
-        if int(num) == 0:
+        if index == 0:
             continue
         tile = Tile("TestTiles.png",
                         x=px, y=py,
