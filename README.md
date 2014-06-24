@@ -16,7 +16,12 @@ To Run
 
 Open a terminal and run
 
-$ python main2.py
+$ python Flush.py
+
+or alternatively
+
+$ chmod +x Flush.py 
+$ ./Flush.py
 
 
 Controls
